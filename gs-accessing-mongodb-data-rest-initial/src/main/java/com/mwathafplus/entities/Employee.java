@@ -18,6 +18,8 @@ public class Employee {
 	String empId;
 	
 	String companyId;
+	
+	String tokenId;
 
 	public String getCompanyId() {
 		return companyId;
@@ -76,13 +78,23 @@ public class Employee {
 		return id;
 	}
 
-	public Employee(String firstName, String lastName, String mobileNumber, String address, String empId) {
+	public Employee(String firstName, String lastName, String mobileNumber, String address, String empId,String tokenId) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mobileNumber = mobileNumber;
 		this.address = address;
 		this.empId = empId;
+		this.tokenId = tokenId;
+	}
+	
+
+	public String getTokenId() {
+		return tokenId;
+	}
+
+	public void setTokenId(String tokenId) {
+		this.tokenId = tokenId;
 	}
 
 	@Override

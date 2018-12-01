@@ -11,5 +11,6 @@ import com.mwathafplus.entities.Merchant;
 public interface MerchantRepo extends MongoRepository<Merchant, String>{
 
 	Optional<Merchant> findByMerchId(String merchId);
-
+	
+	Optional<Merchant> findByMerchIdAndEmailAddress(String merchantId, String emailAddress);
 }

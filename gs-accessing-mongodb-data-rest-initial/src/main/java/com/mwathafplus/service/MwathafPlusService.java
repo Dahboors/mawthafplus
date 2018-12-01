@@ -15,6 +15,7 @@ import com.mwathafplus.entities.Employee;
 import com.mwathafplus.entities.Merchant;
 import com.mwathafplus.exception.CompanyNotFoundException;
 import com.mwathafplus.exception.EmployeeNotFoundException;
+import com.mwathafplus.exception.MerchantNotFoundException;
 import com.mwathafplus.repo.CompanyRepo;
 import com.mwathafplus.repo.DiscountsRepo;
 import com.mwathafplus.repo.EmployeeRepo;
@@ -44,7 +45,7 @@ public class MwathafPlusService {
 			listOfDiscounts.forEach(x->{
 			String merchantName = getMerchantById(x.getMerchId());
 			String companyName = getCompanyById(companyId);
-			DiscountData discount = new DiscountData(companyName,merchantName,x.getValue(),x.getLang(),x.getLat());
+			DiscountData discount = new DiscountData(companyName,merchantName,x.getValue(),x.getLang(),x.getLat(),companyId);
 			discountData.add(discount);
 			});
 		}
@@ -57,12 +58,17 @@ public class MwathafPlusService {
 		return discountRepo.findBycompanyId(companyId);
 	}
 	
-	public EmployeeData findEmployee(String employeeId) {
+	public EmployeeData findEmployee(String employeeId,String tokenId) {
 		Optional<Employee> employee = employeeRepo.findByEmpId(employeeId);
 		if(!employee.isPresent())
 		throw new EmployeeNotFoundException();
 
+		
 		Employee emp = employee.get();
+		emp.setTokenId(tokenId);
+		//update employee with token
+		employeeRepo.save(emp);
+		
 		EmployeeData employeeData = new EmployeeData(emp.getFirstName(),emp.getLastName(),emp.getMobileNumber(),emp.getEmpId(),emp.getCompanyId());
 		return employeeData;
 	}
@@ -72,8 +78,8 @@ public class MwathafPlusService {
 	}
 	
 	
-	public Merchant saveMerchant(String merchantId, String name, String mobileNumber, String address) {
-		Merchant merchant = new Merchant(merchantId,name,mobileNumber,address);
+	public Merchant saveMerchant(String merchantId, String name, String mobileNumber, String address,String emailAddress) {
+		Merchant merchant = new Merchant(merchantId,name,mobileNumber,address,emailAddress);
 		return merchantRepo.save(merchant);
 	}
 		
@@ -108,7 +114,7 @@ public class MwathafPlusService {
 			listOfDiscounts.forEach(x->{
 			String merchantName = getMerchantById(merchantId);
 			String companyName = getCompanyById(x.getCompanyId());
-			DiscountData discount = new DiscountData(companyName,merchantName,x.getValue(),x.getLang(),x.getLat());
+			DiscountData discount = new DiscountData(companyName,merchantName,x.getValue(),x.getLang(),x.getLat(),x.getCompanyId());
 			discountData.add(discount);
 			});
 		}
@@ -116,8 +122,6 @@ public class MwathafPlusService {
 		return discountData;
 		
 	}
-
-
 	
 	private String getCompanyById(String companyId) {
 		Optional<Company> company = companyRepo.findByCompanyId(companyId);
@@ -136,6 +140,32 @@ public class MwathafPlusService {
 	}
 
 	public boolean removeDiscounts(String merchantId, String companyId) {
-		return discountRepo.deleteByMerchIdAndCompanyId(merchantId,companyId);
+		discountRepo.deleteByMerchIdAndCompanyId(merchantId,companyId);
+		return true;
+	}
+	
+	
+	public void sendNotification() {
+	    //Just I am passed dummy information
+        String tokenId = "cHtZVDYNfiY:APA91bEIzJLk7jjjmPuLexdYGeekUpQ6w8M2bn45VUC_oytyWRlXWKu6LJ1k28yWIX5bRBpp0eKDD5SN1pZsKq9VQXiLpZpICeDetP562FaOBdwd1UmO2OUYx9c4cQJHQ5dsR_DJI-Gu";
+
+        String server_key = "AAAAhEy3EPQ:APA91bEnGV0KxOvmz8pQcAxRRUGZ2jZWuTpirwnOT-CCrqcgYw8mBJGZ43vxuNvy7DAvVC4yusSsJ2jC56k2tCx9-Z27PhMkVayQCybDu3wN3dsbXXgQw3JqZw3QUADTfNryBkDKcP36";
+
+        String title = "Hello ... ";
+
+        String message = "Welcome to FCM Server push notification!.";
+
+//Method to send Push Notification
+        FCM.send_FCM_Notification(tokenId, server_key, title, message);
+	}
+
+	public Merchant getMerchantByMerchantIdAndEmailAddress(String merchantId, String emailAddress) {
+		
+		Optional<Merchant> merchant = merchantRepo.findByMerchIdAndEmailAddress(merchantId,emailAddress);
+		
+		if(!merchant.isPresent())
+			throw new MerchantNotFoundException();
+		
+			return merchant.get();
 	}
 }

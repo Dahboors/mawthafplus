@@ -3,14 +3,19 @@ package com.mwathafplus.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mwathafplus.data.AddDiscount;
 import com.mwathafplus.data.DiscountData;
 import com.mwathafplus.data.EmployeeData;
+import com.mwathafplus.data.EmployeeLogin;
+import com.mwathafplus.data.MerchantLogin;
 import com.mwathafplus.entities.Company;
 import com.mwathafplus.entities.Discount;
 import com.mwathafplus.entities.Merchant;
@@ -18,6 +23,7 @@ import com.mwathafplus.service.MwathafPlusService;
 
 @RestController
 @RequestMapping("mwathafplus/api")
+@CrossOrigin
 public class MwathafplusController {
 	@Autowired 
 	private MwathafPlusService mwathafPlusService ;
@@ -27,9 +33,10 @@ public class MwathafplusController {
 	 * @param employeeId
 	 * @return
 	 */
-	@GetMapping("/Employee/{employeeId}")
-	public EmployeeData getEmployee(@PathVariable String employeeId) {
-		return mwathafPlusService.findEmployee(employeeId);
+	@PostMapping("/Employee")
+	public EmployeeData postEmployee (@RequestBody EmployeeLogin employeeLogin) {
+		
+		return mwathafPlusService.findEmployee(employeeLogin.getEmployeeId(),employeeLogin.getTokenId());
 	}
 
 	/**
@@ -62,9 +69,9 @@ public class MwathafplusController {
     }
 	
 	@PostMapping("/merchant")
-    public Merchant saveMerchant(String merchantId,String name, String mobileNumber, String address)
+    public Merchant saveMerchant(String merchantId,String name, String mobileNumber, String address,String emailAddress)
     {
-        return mwathafPlusService.saveMerchant(merchantId,name, mobileNumber, address);
+        return mwathafPlusService.saveMerchant(merchantId,name, mobileNumber, address,emailAddress);
     }
 	
 	/**
@@ -84,6 +91,13 @@ public class MwathafplusController {
 		return mwathafPlusService.removeDiscounts(merchantId,companyId);
 	}
 	
+	
+	@PostMapping("/loginMerchant")
+	public Merchant getMerchant(@RequestBody MerchantLogin merchantLogin) {
+		
+		return mwathafPlusService.getMerchantByMerchantIdAndEmailAddress(merchantLogin.getMerchantId(),merchantLogin.getEmailAddress());
+	}
+	
 	//--ToDo must value be double 
 	/**
 	 * to Save Offers 
@@ -96,8 +110,9 @@ public class MwathafplusController {
 	 * @return
 	 */
 	@PostMapping("/offers")
-	public Discount saveOffers(String companyId, String merchId, int value, int category, String lang, String lat)
+	public Discount saveOffers(@RequestBody AddDiscount addDiscount)
 	{
-		return mwathafPlusService.saveDiscounst(companyId, merchId, category, value, lang, lat);
+		
+		return mwathafPlusService.saveDiscounst(addDiscount.getCompanyId(), addDiscount.getMerchId(), addDiscount.getCategory(), addDiscount.getValue(), addDiscount.getLang(), addDiscount.getLat());
 	}
 }

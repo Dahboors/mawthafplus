@@ -2,6 +2,14 @@ package com.mwathafplus.data;
 
 public class DiscountData {
 
+	private String companyId;
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
 	private String companyName;
 	private String marchentName;
 	private int valueOfDiscount;
@@ -44,13 +52,14 @@ public class DiscountData {
 	public DiscountData() {
 	}
 	
-	public DiscountData(String companyName,String marchentName, int valueOfDiscount, String lang, String lat) {
+	public DiscountData(String companyName,String marchentName, int valueOfDiscount, String lang, String lat,String companyId) {
 		super();
 		this.companyName= companyName;
 		this.marchentName = marchentName;
 		this.valueOfDiscount = valueOfDiscount;
 		this.lang = lang;
 		this.lat = lat;
+		this.companyId=companyId;
 	}
 	
 	

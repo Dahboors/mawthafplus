@@ -18,5 +18,5 @@ public interface DiscountsRepo extends MongoRepository<Discount, String> {
 
 	Optional<List<Discount>> findByMerchId(String merchId);
 
-	boolean deleteByMerchIdAndCompanyId(String merchantId, String companyId);
+	Long deleteByMerchIdAndCompanyId(String merchantId, String companyId);
 }
